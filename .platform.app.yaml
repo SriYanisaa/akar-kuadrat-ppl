@@ -1,43 +1,13 @@
-name: "akar-kuadrat-ppl"  # Ganti "laravel-app" dengan nama aplikasi Anda
-
-type: "php:7.4.28"  # Versi PHP yang digunakan, sesuaikan dengan kebutuhan aplikasi Anda
-
-disk: 1024  # Ukuran disk yang diperlukan dalam MB, sesuaikan dengan kebutuhan Anda
-
-# Masukkan variabel-variabel lingkungan (environment variables) yang diperlukan oleh aplikasi Anda
-variables:
-    APP_KEY: ""base64:s73W9NmPGw6LO7kynSgCWaGmb7pyEesTcuNCJ0FnfV0=""
-    DB_HOST: 127.0.0.1
-    DB_PORT: 3306
-    DB_DATABASE: "akarkuadratapi"
-    DB_USERNAME: "root"
-    DB_PASSWORD: ""
-
-web:
-    commands:
-        start: |
-            # Jalankan migrasi database saat aplikasi pertama kali di-deploy
-            php artisan migrate --force
-    locations:
-        "/":
-            # Set konfigurasi server web
-            passthru: "/index.php"
-            expires: 1m
-
-# Services yang diperlukan, sesuaikan dengan kebutuhan aplikasi Anda
-services:
-    database:
-        type: "mysql:10.4.16"
-        disk: 1024
-        configuration:
-            databases:
-                default:
-                    type: "mysql:10.4.16"
-                    disk: 1024
-                    # Konfigurasi database, sesuaikan dengan pengaturan database Anda
-                    config:
-                        host: "127.0.0.1"
-                        port: "3306"
-                        database: "akarkuadratapi"
-                        username: "root"
-                        password: ""
+name: "laravel-app"
+type: "php:7.4.28"
+build:
+   flavor: "composer"
+relationships:
+   database: "mysql:mysql"
+hooks:
+   build: |
+      set -e
+      cp .env.example .env
+      composer install --no-dev
+      php artisan key:generate
+      php artisan migrate --force
